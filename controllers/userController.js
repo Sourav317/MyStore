@@ -3,7 +3,7 @@ import UserModel from "../models/User.js";
 
 class UserController {
   static userRegistration = async (req, res) => {
-    const { name, password } = req.body;
+    const { name, password, role } = req.body;
     const user = await UserModel.findOne({ name: name });
     if (user) {
       res
@@ -11,12 +11,13 @@ class UserController {
         .send({ status: "failed", message: "Username already exists" });
     } else {
       if (name && password) {
-        const isSaved = await userHelper.registrationUser(name, password);
+        const isSaved = await userHelper.registrationUser(name, password, role);
 
         isSaved.isSuccess == true
           ? res.status(201).send({
               status: "success",
               message: "Registration Success",
+              role: isSaved.role,
               Token: isSaved.token,
             })
           : res.status(404).send({ data: isSaved });
@@ -40,6 +41,7 @@ class UserController {
             ? res.status(200).send({
                 status: "success",
                 message: "Login Success",
+                role: isLoggedIn.role,
                 Token: isLoggedIn.token,
               })
             : res.status(401).send({ data: isLoggedIn });
@@ -65,6 +67,10 @@ class UserController {
 
   static loggedUser = async (req, res) => {
     res.send({ user: req.user });
+  };
+
+  static transactionLogs = async (req, res) => {
+    res.send({ data: { isAdmin: true } });
   };
 }
 

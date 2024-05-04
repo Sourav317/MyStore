@@ -3,13 +3,14 @@ import UserModel from "../models/User.js";
 import jwt from "jsonwebtoken";
 
 class userHelper {
-  static async registrationUser(name, password) {
+  static async registrationUser(name, password, role = "member") {
     try {
       const salt = await bcrypt.genSalt(10);
       const hashPassword = await bcrypt.hash(password, salt);
       const doc = new UserModel({
         name: name,
         password: hashPassword,
+        role: role,
       });
       await doc.save();
       const saved_user = await UserModel.findOne({ name: name });
@@ -19,7 +20,7 @@ class userHelper {
         process.env.JWT_SECRET_KEY,
         { expiresIn: "5d" },
       );
-      return { isSuccess: true, token: token };
+      return { isSuccess: true, role: saved_user.role, token: token };
     } catch (error) {
       console.log(error);
       return {
@@ -41,7 +42,7 @@ class userHelper {
         });
 
       return user.name === name && isMatch
-        ? { isSuccess: true, token: token }
+        ? { isSuccess: true, role: user.role, token: token }
         : { isSuccess: false };
     } catch (error) {
       console.log(error);
