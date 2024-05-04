@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import UserModel from "../models/User.js";
+import jwt from "jsonwebtoken";
 
 class userHelper {
   static async registrationUser(name, password) {
@@ -11,7 +12,14 @@ class userHelper {
         password: hashPassword,
       });
       await doc.save();
-      return true;
+      const saved_user = await UserModel.findOne({ name: name });
+      // Generate JWT Token
+      const token = jwt.sign(
+        { userID: saved_user._id },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "5d" },
+      );
+      return { isSuccess: true, token: token };
     } catch (error) {
       console.log(error);
       return {
@@ -21,10 +29,20 @@ class userHelper {
     }
   }
 
-  static async loginUser(name, password, userName, userPassword) {
+  static async loginUser(name, password, user) {
     try {
-      const isMatch = await bcrypt.compare(password, userPassword);
-      return userName === name && isMatch;
+      const isMatch = await bcrypt.compare(password, user.password);
+      let token = "";
+
+      // Generate JWT Token
+      if (isMatch)
+        token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET_KEY, {
+          expiresIn: "1d",
+        });
+
+      return user.name === name && isMatch
+        ? { isSuccess: true, token: token }
+        : { isSuccess: false };
     } catch (error) {
       console.log(error);
       return {
