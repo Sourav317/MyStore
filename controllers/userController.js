@@ -1,5 +1,5 @@
+import userHelper from "../helper/userHelper.js";
 import UserModel from "../models/User.js";
-import bcrypt from "bcrypt";
 
 class UserController {
   static userRegistration = async (req, res) => {
@@ -11,29 +11,60 @@ class UserController {
         .send({ status: "failed", message: "Username already exists" });
     } else {
       if (name && password) {
-        try {
-          const salt = await bcrypt.genSalt(10);
-          const hashPassword = await bcrypt.hash(password, salt);
-          const doc = new UserModel({
-            name: name,
-            password: hashPassword,
-          });
-          await doc.save();
-          res
-            .status(201)
-            .send({ status: "success", message: "Registration Success" });
-        } catch (error) {
-          console.log(error);
-          res.send({
-            status: "failed",
-            message: "Unable to Register" + ` error - ${error}`,
-          });
-        }
+        const isSaved = await userHelper.registrationUser(name, password);
+
+        isSaved == true
+          ? res
+              .status(201)
+              .send({ status: "success", message: "Registration Success" })
+          : res.send({ data: isSaved });
       } else {
         res
           .status(404)
           .send({ status: "failed", message: "All fields are required" });
       }
+    }
+  };
+
+  static userLogin = async (req, res) => {
+    try {
+      const { name, password } = req.body;
+      if (name && password) {
+        const user = await UserModel.findOne({ name: name });
+        if (user != null) {
+          const isLoggedIn = await userHelper.loginUser(
+            name,
+            password,
+            user.name,
+            user.password,
+          );
+
+          isLoggedIn == true
+            ? res
+                .status(200)
+                .send({ status: "success", message: "Login Success" })
+            : res.send({ data: isLoggedIn });
+        } else {
+          res
+            .status(404)
+            .send({
+              status: "failed",
+              message: "You are not a Registered User",
+            });
+        }
+      } else {
+        res
+          .status(404)
+          .send({ status: "failed", message: "All Fields are Required" });
+      }
+    } catch (error) {
+      console.log(error);
+      res
+        .status(404)
+        .send({
+          status: "failed",
+          message: "Unable to Login" + ` error - ${error} `,
+        });
     }
   };
 }
