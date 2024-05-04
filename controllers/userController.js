@@ -14,13 +14,11 @@ class UserController {
         const isSaved = await userHelper.registrationUser(name, password);
 
         isSaved.isSuccess == true
-          ? res
-              .status(201)
-              .send({
-                status: "success",
-                message: "Registration Success",
-                Token: isSaved.token,
-              })
+          ? res.status(201).send({
+              status: "success",
+              message: "Registration Success",
+              Token: isSaved.token,
+            })
           : res.status(404).send({ data: isSaved });
       } else {
         res
@@ -39,13 +37,11 @@ class UserController {
           const isLoggedIn = await userHelper.loginUser(name, password, user);
 
           isLoggedIn.isSuccess == true
-            ? res
-                .status(200)
-                .send({
-                  status: "success",
-                  message: "Login Success",
-                  Token: isLoggedIn.token,
-                })
+            ? res.status(200).send({
+                status: "success",
+                message: "Login Success",
+                Token: isLoggedIn.token,
+              })
             : res.status(401).send({ data: isLoggedIn });
         } else {
           res.status(404).send({
@@ -65,6 +61,10 @@ class UserController {
         message: "Unable to Login" + ` error - ${error} `,
       });
     }
+  };
+
+  static loggedUser = async (req, res) => {
+    res.send({ user: req.user });
   };
 }
 
