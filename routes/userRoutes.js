@@ -2,6 +2,7 @@ import express from "express";
 import UserController from "../controllers/userController.js";
 import checkUserAuth from "../middlewares/auth-middleware.js";
 import requireRole from "../middlewares/role-middleware.js";
+import upload from "../middlewares/upload-middleware.js";
 
 const router = express.Router();
 
@@ -12,6 +13,7 @@ router.use("/transactionLogs", [checkUserAuth, requireRole]);
 // Public Routes
 router.post("/register", UserController.userRegistration);
 router.post("/login", UserController.userLogin);
+router.post("/uploads", upload.single("profile"), UserController.UploadFile);
 
 // Protected Routes
 router.get("/loggeduser", UserController.loggedUser);

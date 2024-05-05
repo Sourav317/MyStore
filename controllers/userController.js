@@ -72,6 +72,18 @@ class UserController {
   static transactionLogs = async (req, res) => {
     res.send({ data: { isAdmin: true } });
   };
+
+  static UploadFile = async (req, res) => {
+    const isUploaded = await userHelper.uploadFile(req, res);
+
+    isUploaded
+      ? res.json({
+          success: 1,
+          profile_url: `http://localhost:4000/profile/${req.file.filename}`,
+          isUploaded: isUploaded,
+        })
+      : res.json({ success: 0, message: "Unable to Upload" });
+  };
 }
 
 export default UserController;

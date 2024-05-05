@@ -54,6 +54,33 @@ class userHelper {
       };
     }
   }
+
+  static async uploadFile(req, res) {
+    try {
+      const { name } = req.body;
+      if (name) {
+        // Update options
+        const updateOptions = {
+          $push: {
+            uploads: `http://localhost:4000/profile/${req.file.filename}`,
+          }, // Add a new value to the uploads array
+        };
+        const user = await UserModel.findOneAndUpdate(
+          { name: name },
+          updateOptions,
+          { returnOriginal: false },
+        );
+        //console.log("user in collection ",user);
+        return user ? true : false;
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(400).send({
+        status: "failed",
+        message: "Unable to update the fileURL in DB" + ` error - ${error} `,
+      });
+    }
+  }
 }
 
 export default userHelper;

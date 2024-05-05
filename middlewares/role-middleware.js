@@ -6,12 +6,10 @@ var requireRole = async (req, res, next) => {
   if (user.role === "admin") {
     next();
   } else {
-    res
-      .status(403)
-      .send({
-        status: "failed",
-        message: "You are not authorized to visit this Route, Must be Admin",
-      });
+    res.status(403).send({
+      status: "failed",
+      message: "You are not authorized to visit this Route, Must be Admin",
+    });
   }
 };
 
