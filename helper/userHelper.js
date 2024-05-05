@@ -133,6 +133,34 @@ class userHelper {
       });
     }
   }
+
+  static async getFileByName(req, res) {
+    try {
+      const { name } = req.body;
+      if (name) {
+        const folderPath = `./uploads/${name}`;
+        const filename = req.body.filename;
+        const file = fs
+          .readdirSync(folderPath, { withFileTypes: true })
+          .find((Objfile) => Objfile.name.includes(filename));
+
+        const user = await UserModel.findOne({ name: name });
+        const fileFromDB = user.uploads.find((file) =>
+          String(file).includes(filename),
+        );
+
+        return file ? { file, fileFromDB } : [];
+      } else {
+        return [];
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(400).send({
+        status: "failed",
+        message: "Unable to get the file" + ` error - ${error} `,
+      });
+    }
+  }
 }
 
 export default userHelper;
