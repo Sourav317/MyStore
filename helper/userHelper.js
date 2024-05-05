@@ -106,7 +106,30 @@ class userHelper {
       console.log(error);
       res.status(400).send({
         status: "failed",
-        message: "Unable to get the fileURL in DB" + ` error - ${error} `,
+        message: "Unable to get the folder" + ` error - ${error} `,
+      });
+    }
+  }
+
+  static async getBucketFiles(req, res) {
+    try {
+      const { name } = req.body;
+      if (name) {
+        const folderPath = `./uploads/${name}`;
+        const files = fs
+          .readdirSync(folderPath, { withFileTypes: true })
+          .filter((dirent) => dirent.isFile())
+          .map((dirent) => dirent.name);
+        //console.log("HI" ,files);
+        return files ? { filesInBuckets: files.length, files: files } : [];
+      } else {
+        return [];
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(400).send({
+        status: "failed",
+        message: "Unable to get the file" + ` error - ${error} `,
       });
     }
   }

@@ -91,6 +91,13 @@ class UserController {
       ? res.send(bucketList)
       : res.send({ message: "No buckets found" });
   };
+
+  static getBucketFiles = async (req, res) => {
+    const bucketList = await userHelper.getBucketFiles(req, res);
+    return bucketList.filesInBuckets > 0
+      ? res.send(bucketList)
+      : res.send({ message: "No buckets found" });
+  };
 }
 
 export default UserController;

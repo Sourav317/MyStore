@@ -15,6 +15,7 @@ router.post("/register", UserController.userRegistration);
 router.post("/login", UserController.userLogin);
 router.put("/uploads", upload.single("profile"), UserController.UploadFile);
 router.get("/getBuckets", UserController.getBucketList);
+router.get("/getFiles", UserController.getBucketFiles);
 
 // Protected Routes
 router.get("/loggeduser", UserController.loggedUser);
