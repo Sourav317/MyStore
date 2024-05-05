@@ -84,6 +84,13 @@ class UserController {
         })
       : res.json({ success: 0, message: "Unable to Upload" });
   };
+
+  static getBucketList = async (req, res) => {
+    const bucketList = await userHelper.getBucketList(req, res);
+    return bucketList.sizeOfBuckets > 0
+      ? res.send(bucketList)
+      : res.send({ message: "No buckets found" });
+  };
 }
 
 export default UserController;

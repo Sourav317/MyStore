@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import UserModel from "../models/User.js";
 import jwt from "jsonwebtoken";
+import fs from "fs";
 
 class userHelper {
   static async registrationUser(name, password, role = "member") {
@@ -78,6 +79,34 @@ class userHelper {
       res.status(400).send({
         status: "failed",
         message: "Unable to update the fileURL in DB" + ` error - ${error} `,
+      });
+    }
+  }
+
+  static async getBucketList(req, res) {
+    try {
+      const { name } = req.body;
+      if (name) {
+        const folderPath = "./uploads";
+        const subfolderName = `${name}`;
+        const folders = fs
+          .readdirSync(folderPath, { withFileTypes: true })
+          .filter(
+            (dirent) => dirent.isDirectory() && dirent.name === subfolderName,
+          )
+          .map((dirent) => dirent.name);
+        //console.log("HI" ,folders);
+        return folders
+          ? { sizeOfBuckets: folders.length, folder: folders }
+          : [];
+      } else {
+        return [];
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(400).send({
+        status: "failed",
+        message: "Unable to get the fileURL in DB" + ` error - ${error} `,
       });
     }
   }
