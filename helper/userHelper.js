@@ -161,6 +161,31 @@ class userHelper {
       });
     }
   }
+
+  static async deleteFile(req, res) {
+    try {
+      const { name } = req.body;
+      if (name) {
+        const filename = req.body.filename;
+        const updateOptions = { $pull: { uploads: filename } };
+
+        const user = await UserModel.findOneAndUpdate(
+          { name: name },
+          updateOptions,
+          { new: true },
+        );
+        return user ? true : false;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(400).send({
+        status: "failed",
+        message: "Unable to delete the file" + ` error - ${error} `,
+      });
+    }
+  }
 }
 
 export default userHelper;

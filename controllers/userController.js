@@ -105,6 +105,13 @@ class UserController {
       ? res.send(bucketFile)
       : res.send({ message: "No File found" });
   };
+
+  static deleteFile = async (req, res) => {
+    const isDeleted = await userHelper.deleteFile(req, res);
+    return isDeleted
+      ? res.send({ isDeleted, message: "Deleted Successfully" })
+      : res.send({ message: "Could not delete File" });
+  };
 }
 
 export default UserController;

@@ -17,6 +17,7 @@ router.put("/uploads", upload.single("profile"), UserController.UploadFile);
 router.get("/getBuckets", UserController.getBucketList);
 router.get("/getAllFiles", UserController.getBucketFiles);
 router.get("/getFileByName", UserController.getFileByName);
+router.delete("/deleteFile", UserController.deleteFile);
 
 // Protected Routes
 router.get("/loggeduser", UserController.loggedUser);
